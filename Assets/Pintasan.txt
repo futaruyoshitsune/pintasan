@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Halaman Pintasan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <style>
+    /* reset & base fixes */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-color: #f6f8fc;
+      --surface-color: #ffffff;
+      --text-color: #1f1f1f;
+      --primary-action: #1a73e8;
+      --secondary-action: #5f6368;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: "DM Sans", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top center, rgba(210,225,255,0.8) 0%, rgba(246,248,252,0.95) 36%, rgba(246,248,252,1) 68%),
+        linear-gradient(180deg, #eef3fd 0%, #f6f8fc 100%);
+      color: var(--text-color);
+      overflow-x: hidden;
+    }
+
+    .page-shell {
+      height: 100%;
+      width: 100%;
+      overflow: auto;
+      position: relative;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.95) 0 7%, transparent 7.5%),
+        radial-gradient(circle at 80% 10%, rgba(255,255,255,0.65) 0 5%, transparent 5.5%),
+        radial-gradient(circle at 70% 70%, rgba(210,225,255,0.35) 0 9%, transparent 9.5%);
+      background-size: 100% 100%;
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeUp 0.8s ease forwards;
+    }
+
+    .fade-up-delay-1 { animation-delay: 0.12s; }
+    .fade-up-delay-2 { animation-delay: 0.24s; }
+    .fade-up-delay-3 { animation-delay: 0.36s; }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .shortcut-card {
+      transition: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease;
+    }
+
+    .shortcut-card:hover,
+    .shortcut-card:focus-visible {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 28px rgba(26, 115, 232, 0.14);
+      background-color: #f8fbff;
+    }
+
+    .glass-search {
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 9999px;
+      filter: blur(30px);
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .orb-one {
+      width: 220px;
+      height: 220px;
+      background: rgba(26, 115, 232, 0.10);
+      top: 8%;
+      left: 6%;
+    }
+
+    .orb-two {
+      width: 280px;
+      height: 280px;
+      background: rgba(156, 195, 255, 0.22);
+      bottom: 10%;
+      right: 5%;
+    }
+
+    .search-ring:focus-within {
+      box-shadow: 0 0 0 4px rgba(26,115,232,0.12);
+    }
+
+    /* Fix missing image fallback and broken layout on some cards */
+    .shortcut-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 0.75rem;
+    }
+
+    /* Prevent card content overflow */
+    .shortcut-card {
+      word-break: break-word;
+    }
+
+    /* fix hover missing text color consistency */
+    .shortcut-card p {
+      transition: color 0.2s;
+    }
+
+    /* fix broken Pinterest & CapCut cards (unclosed tags / layout) */
+    .grid-cols-2, .grid-cols-3, .grid-cols-5 {
+      display: grid;
+    }
+
+    /* ensure images load gracefully */
+    img {
+      display: block;
+    }
+  </style>
+</head>
+<body class="h-full">
+<div class="page-shell h-full w-full overflow-auto">
+  <div class="orb orb-one"></div>
+  <div class="orb orb-two"></div>
+  <main class="w-full min-h-full flex items-center justify-center px-5 py-10">
+    <section class="w-full max-w-5xl text-center">
+      <header class="mb-8 fade-up">
+        <div class="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm text-slate-600 shadow-sm ring-1 ring-white/80">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>Halaman pintasan cepat</span>
+        </div>
+      </header>
+      <div class="fade-up fade-up-delay-1">
+        <h1 id="pageTitle" class="text-4xl md:text-6xl font-semibold tracking-tight text-slate-800">Selamat datang</h1>
+        <p id="pageSubtitle" class="mt-3 text-base md:text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">Buka website favoritmu lebih cepat dari satu halaman yang rapi dan ringan.</p>
+      </div>
+      <div class="fade-up fade-up-delay-2 mt-8">
+        <form id="searchForm" class="mx-auto max-w-2xl" aria-label="Pencarian atau alamat website">
+          <label for="searchInput" class="sr-only">Cari atau ketik alamat website</label>
+          <div class="search-ring glass-search flex items-center gap-3 rounded-full border border-white/80 bg-white/78 px-5 py-4 shadow-[0_10px_30px_rgba(80,110,160,0.12)] transition">
+            <i data-lucide="search" class="w-5 h-5 text-slate-400"></i>
+            <input id="searchInput" type="text" class="w-full bg-transparent text-[15px] text-slate-700 outline-none placeholder:text-slate-400" placeholder="Cari atau ketik URL" aria-label="Cari atau ketik URL">
+            <button type="submit" id="searchButton" class="shrink-0 rounded-full px-4 py-2 text-sm font-medium text-white transition hover:brightness-110 focus:outline-none focus:ring-4" style="background-color: var(--primary-action);">Buka</button>
+          </div>
+        </form>
+      </div>
+      <section class="fade-up fade-up-delay-3 mt-10" aria-labelledby="shortcutHeading">
+        <div class="flex items-center justify-center gap-2 mb-5 text-slate-500">
+          <i data-lucide="grid-2x2" class="w-4 h-4"></i>
+          <h2 id="shortcutHeading" class="text-sm font-medium uppercase tracking-[0.24em]">Pintasan</h2>
+        </div>
+        <!-- GOOGLE SECTION -->
+        <div class="mt-12">
+          <div class="flex items-center gap-3 mb-4">
+            <h2 class="text-2xl font-bold text-blue-700 bg-blue-100 px-4 py-1 rounded-full">Layanan Google</h2>
+            <div class="flex-1 h-[2px] bg-blue-200"></div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5">
+            <a href="https://www.gmail.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white group-hover:scale-110 transition duration-200"><img src="Gmail.jfif" class="w-full h-full object-contain rounded-xl" alt="Gmail"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Google Gmail</p>
+              <p class="mt-1 text-xs text-slate-400">Email & komunikasi</p>
+            </a>
+            <a href="https://drive.google.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 group-hover:scale-110 transition duration-200"><img src="Drive.jfif" class="w-full h-full object-contain rounded-xl" alt="Google Drive"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Google Drive</p>
+              <p class="mt-1 text-xs text-slate-400">Penyimpanan cloud</p>
+            </a>
+            <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-600 group-hover:scale-110 transition duration-200"><img src="Maps.jfif" class="w-full h-full object-contain rounded-xl" alt="Google Maps"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Google Maps</p>
+              <p class="mt-1 text-xs text-slate-400">Peta & navigasi</p>
+            </a>
+            <a href="https://docs.google.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 group-hover:scale-110 transition duration-200"><img src="Docs.jfif" class="w-full h-full object-contain rounded-xl" alt="Google Docs"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Google Document</p>
+              <p class="mt-1 text-xs text-slate-400">Dokumen online</p>
+            </a>
+            <a href="https://sheets.google.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50 text-green-600 group-hover:scale-110 transition duration-200"><img src="Sheets.jfif" class="w-full h-full object-contain rounded-xl" alt="Google Sheets"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Google Sheets</p>
+              <p class="mt-1 text-xs text-slate-400">Spreadsheet online</p>
+            </a>
+            <a href="https://slides.google.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-yellow-50 text-yellow-600 group-hover:scale-110 transition duration-200"><img src="Slides.jfif" class="w-full h-full object-contain rounded-xl" alt="Google Slides"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Google Slides</p>
+              <p class="mt-1 text-xs text-slate-400">Presentasi online</p>
+            </a>
+            <a href="https://forms.google.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-50 text-purple-600 group-hover:scale-110 transition duration-200"><img src="Forms.jfif" class="w-full h-full object-contain rounded-xl" alt="Google Forms"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Google Forms</p>
+              <p class="mt-1 text-xs text-slate-400">Kuesioner & survey</p>
+            </a>
+            <a href="https://calendar.google.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-blue-700 group-hover:scale-110 transition duration-200"><img src="Calendar.jfif" class="w-full h-full object-contain rounded-xl" alt="Google Calendar"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Google Calendar</p>
+              <p class="mt-1 text-xs text-slate-400">Jadwal & pengingat</p>
+            </a>
+            <a href="https://photos.google.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-50 text-pink-600 group-hover:scale-110 transition duration-200"><img src="Photos.jfif" class="w-full h-full object-contain rounded-xl" alt="Google Photos"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Google Photos</p>
+              <p class="mt-1 text-xs text-slate-400">Galeri & backup foto</p>
+            </a>
+            <a href="https://meet.google.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-green-100 text-green-700 group-hover:scale-110 transition duration-200"><img src="Meet.jfif" class="w-full h-full object-contain rounded-xl" alt="Google Meet"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Google Meet</p>
+              <p class="mt-1 text-xs text-slate-400">Video conference</p>
+            </a>
+            <a href="https://keep.google.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-yellow-100 text-yellow-700 group-hover:scale-110 transition duration-200"><img src="Keep.jfif" class="w-full h-full object-contain rounded-xl" alt="Google Keep"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Google Keep</p>
+              <p class="mt-1 text-xs text-slate-400">Catatan cepat</p>
+            </a>
+            <a href="https://news.google.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 group-hover:scale-110 transition duration-200"><img src="News.jfif" class="w-full h-full object-contain rounded-xl" alt="Google News"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Google News</p>
+              <p class="mt-1 text-xs text-slate-400">Berita terkini</p>
+            </a>
+            <a href="https://translate.google.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-50 text-cyan-600 group-hover:scale-110 transition duration-200"><img src="Translate.jfif" class="w-full h-full object-contain rounded-xl" alt="Google Translate"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Google Translate</p>
+              <p class="mt-1 text-xs text-slate-400">Terjemahan bahasa</p>
+            </a>
+            <a href="https://lens.google.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 text-teal-600 group-hover:scale-110 transition duration-200"><img src="Lens.jfif" class="w-full h-full object-contain rounded-xl" alt="Google Lens"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Google Lens</p>
+              <p class="mt-1 text-xs text-slate-400">Pencarian & info dari gambar</p>
+            </a>
+            <a href="https://classroom.google.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+             <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-teal-600 group-hover:scale-110 transition duration-200"><img src="Classroom.jfif" class="w-full h-full object-contain rounded-xl" alt="Google Classroom"></div>
+             <p class="mt-4 text-sm font-semibold text-slate-700">Google Classroom</p>
+             <p class="mt-1 text-xs text-slate-400">platform pembelajaran gratis</p>
+           </a>
+          </div>
+        </div>
+
+        <!-- MEDIA SOSIAL SECTION -->
+        <div class="mt-12">
+          <div class="flex items-center gap-3 mb-4">
+            <h2 class="text-2xl font-bold text-green-700 bg-green-100 border-green-200 px-4 py-1 rounded-full">Media Sosial</h2>
+            <div class="flex-1 h-[2px] bg-pink-200"></div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5">
+            <a href="https://discord.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-700 group-hover:scale-110 transition duration-200"><img src="Discord.jfif" class="w-full h-full object-contain rounded-xl" alt="Discord"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Discord</p>
+              <p class="mt-1 text-xs text-slate-400">Chat & voice komunitas</p>
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-100 via-purple-100 to-orange-100 text-pink-600 group-hover:scale-110 transition duration-200"><img src="Instagram.jfif" class="w-full h-full object-contain rounded-xl" alt="Instagram"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Instagram</p>
+              <p class="mt-1 text-xs text-slate-400">Berbagi foto & video</p>
+            </a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 group-hover:scale-110 transition duration-200"><img src="Facebook.jfif" class="w-full h-full object-contain rounded-xl" alt="Facebook"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Facebook</p>
+              <p class="mt-1 text-xs text-slate-400">Sosial & komunitas</p>
+            </a>
+            <a href="https://web.whatsapp.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50 text-green-600 group-hover:scale-110 transition duration-200"><img src="Whatsapp.jfif" class="w-full h-full object-contain rounded-xl" alt="WhatsApp"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">WhatsApp</p>
+              <p class="mt-1 text-xs text-slate-400">Chat & telepon cepat</p>
+            </a>
+            <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-black/10 text-white group-hover:scale-110 transition duration-200"><img src="TikTok.jfif" class="w-full h-full object-contain rounded-xl" alt="TikTok"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Tiktok</p>
+              <p class="mt-1 text-xs text-slate-400">Video pendek viral</p>
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-black/10 text-white group-hover:scale-110 transition duration-200"><img src="X.jfif" class="w-full h-full object-contain rounded-xl" alt="TikTok"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">X</p>
+              <p class="mt-1 text-xs text-slate-400">Microblogging & trending</p>
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-black/10 text-white group-hover:scale-110 transition duration-200"><img src="Linkedin.jfif" class="w-full h-full object-contain rounded-xl" alt="TikTok"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Linkedin</p>
+              <p class="mt-1 text-xs text-slate-400">Jaringan Profesional</p>
+            </a>
+            <a href="https://reddit.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-black/10 text-white group-hover:scale-110 transition duration-200"><img src="Reddit.jfif" class="w-full h-full object-contain rounded-xl" alt="TikTok"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Reddit</p>
+              <p class="mt-1 text-xs text-slate-400">Forum & Komunitas</p>
+            </a>
+            <a href="https://web.telegram.org" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-black/10 text-white group-hover:scale-110 transition duration-200"><img src="Telegram.jfif" class="w-full h-full object-contain rounded-xl" alt="TikTok"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Telegram</p>
+              <p class="mt-1 text-xs text-slate-400">Messenger & Channel</p>
+            </a>
+            <a href="https://web.snapchat.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-black/10 text-white group-hover:scale-110 transition duration-200"><img src="Snapchat.jfif" class="w-full h-full object-contain rounded-xl" alt="TikTok"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Snapchat</p>
+              <p class="mt-1 text-xs text-slate-400">snap & cerita</p>
+            </a>
+          </div>
+        </div>
+
+        <!-- Film & Video -->
+        <div class="mt-12">
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5">
+            <h2 class="text-2xl font-bold text-red-700 bg-red-100 px-4 py-1 rounded-full">Film & Video</h2>
+            <div class="flex-1 h-[2px] bg-red-200"></div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            <a href="https://www.netflix.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-black/10 text-red-600 group-hover:scale-110 transition duration-200"><img src="Netflix.jfif" class="w-full h-full object-contain rounded-xl" alt="Netflix"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Netflix</p>
+              <p class="mt-1 text-xs text-slate-400">Jelajahi Film</p>
+            </a>
+            <a href="https://d21.team" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-gray-700 group-hover:scale-110 transition duration-200"><img src="LK21.jfif" class="w-full h-full object-contain rounded-xl" alt="LK21"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">LK21</p>
+              <p class="mt-1 text-xs text-slate-400">Tonton film gratis</p>
+            </a>
+            <a href="https://www.Youtube.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-white group-hover:scale-110 transition duration-200"><img src="Youtube.jfif" class="w-full h-full object-contain rounded-xl" alt="YouTube"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Youtube</p>
+              <p class="mt-1 text-xs text-slate-400">Video & streaming</p>
+            </a>
+            <a href="https://www.bilibili.tv" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-white group-hover:scale-110 transition duration-200"><img src="Bstation.png" class="w-full h-full object-contain rounded-xl" alt="Bstation"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Bstation</p>
+              <p class="mt-1 text-xs text-slate-400">animasi, musik, dan gaming</p>
+            </a>
+            <a href="https://www.disneyplus.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-white group-hover:scale-110 transition duration-200"><img src="Disney.jfif" class="w-full h-full object-contain rounded-xl" alt="Bstation"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Disney+</p>
+              <p class="mt-1 text-xs text-slate-400">Film disney dan marvel</p>
+            </a>
+	    <a href="https://www.primevideo.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-white group-hover:scale-110 transition duration-200"><img src="Primevideo.jfif" class="w-full h-full object-contain rounded-xl" alt="Bstation"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Prime Video</p>
+              <p class="mt-1 text-xs text-slate-400">Film & Series Amazon</p>
+            </a>
+	    <a href="https://www.twitch.tv" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-white group-hover:scale-110 transition duration-200"><img src="Twitch.jfif" class="w-full h-full object-contain rounded-xl" alt="Bstation"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Twitch</p>
+              <p class="mt-1 text-xs text-slate-400">Live gaming & Streaming</p>
+            </a>
+	    <a href="https://www.vimeo.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-white group-hover:scale-110 transition duration-200"><img src="Vimeo.jfif" class="w-full h-full object-contain rounded-xl" alt="Bstation"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Bstation</p>
+              <p class="mt-1 text-xs text-slate-400">Video Kualitas tinggi</p>
+            </a>
+	    <a href="https://www.dailymotion.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-white group-hover:scale-110 transition duration-200"><img src="Dailymotion.jfif" class="w-full h-full object-contain rounded-xl" alt="Bstation"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Bstation</p>
+              <p class="mt-1 text-xs text-slate-400">Video Global</p>
+            </a>
+         </div>
+        </div>
+
+        <!-- Music -->
+        <div class="mt-12">
+          <div class="flex items-center gap-3 mb-4">
+            <h2 class="text-2xl font-bold text-orange-700 bg-orange-100 px-4 py-1 rounded-full">Music</h2>
+            <div class="flex-1 h-[2px] bg-orange-200"></div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+           <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-black text-emerald-700 group-hover:scale-110 transition duration-200"><img src="MusicYoutube.jfif" class="w-full h-full object-contain rounded-xl" alt="Radio Garden"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Youtube Music</p>
+              <p class="mt-1 text-xs text-slate-400">Jelajahi Musik dengan Youtube</p>
+            </a>
+            <a href="https://open.spotify.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+             <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-black text-emerald-700 group-hover:scale-110 transition duration-200"><img src="Spotify.jfif" class="w-full h-full object-contain rounded-xl" alt="Radio Garden"></div>
+             <p class="mt-4 text-sm font-semibold text-slate-700">Spotify</p>
+             <p class="mt-1 text-xs text-slate-400">Temukan Musik gratis</p>
+           </a>
+           <a href="https://radio.garden" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+             <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue text-emerald-700 group-hover:scale-110 transition duration-200"><img src="RadioGarden.jfif" class="w-full h-full object-contain rounded-xl" alt="Radio Garden"></div>
+             <p class="mt-4 text-sm font-semibold text-slate-700">Radio Garden</p>
+             <p class="mt-1 text-xs text-slate-400">Radio Keliling Dunia</p>
+           </a>
+	   <a href="https://music.apple.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+             <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue text-emerald-700 group-hover:scale-110 transition duration-200"><img src="Apple.jfif" class="w-full h-full object-contain rounded-xl" alt="Radio Garden"></div>
+             <p class="mt-4 text-sm font-semibold text-slate-700">Apple Music</p>
+             <p class="mt-1 text-xs text-slate-400">Music dari Apple</p>
+           </a>
+	   <a href="https://SoundCloud.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+             <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue text-emerald-700 group-hover:scale-110 transition duration-200"><img src="Soundcloud.jfif" class="w-full h-full object-contain rounded-xl" alt="Radio Garden"></div>
+             <p class="mt-4 text-sm font-semibold text-slate-700">Sound Cloud</p>
+             <p class="mt-1 text-xs text-slate-400">Music, Indie, Remix</p>
+           </a>
+	   <a href="https://www.Dezzer.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+             <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue text-emerald-700 group-hover:scale-110 transition duration-200"><img src="Dezzer.jfif" class="w-full h-full object-contain rounded-xl" alt="Radio Garden"></div>
+             <p class="mt-4 text-sm font-semibold text-slate-700">Dezzer</p>
+             <p class="mt-1 text-xs text-slate-400">Music Global</p>
+           </a>
+         </div>
+        </div>
+
+
+        <!-- AI SECTION -->
+        <div class="mt-12">
+          <div class="flex items-center gap-3 mb-4">
+            <h2 class="text-2xl font-bold text-purple-700 bg-purple-100 px-4 py-1 rounded-full">AI</h2>
+            <div class="flex-1 h-[2px] bg-purple-200"></div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5">
+            <a href="https://www.chatgpt.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white group-hover:scale-110 transition duration-200"><img src="ChatGPT.jfif" class="w-full h-full object-contain rounded-xl" alt="ChatGPT"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">ChatGPT</p>
+              <p class="mt-1 text-xs text-slate-400">Obrolan & AI pintar</p></a>
+              <a href="https://3d.hunyuanglobal.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-sky-50 text-sky-600 group-hover:scale-110 transition duration-200"><img src="Hunyuan.jfif" class="w-full h-full object-contain rounded-xl" alt="Hunyuan 3D"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Hunyuan 3D</p>
+              <p class="mt-1 text-xs text-slate-400">AI bikin model 3D</p>
+            </a>
+            <a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-cyan-600 group-hover:scale-110 transition duration-200"><img src="Gemini.jfif" class="w-full h-full object-contain rounded-xl" alt="Gemini AI"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Gemini AI</p>
+              <p class="mt-1 text-xs text-slate-400">AI pencarian & saran</p>
+            </a>
+            <a href="https://stablediffusionweb.com/app" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-fuchsia-50 text-fuchsia-600 group-hover:scale-110 transition duration-200"><img src="StableDiffusion.png" class="w-full h-full object-contain rounded-xl" alt="Stable Diffusion"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Stable Diffusion</p>
+              <p class="mt-1 text-xs text-slate-400">AI buat gambar kreatif</p>
+            </a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-black/10 text-white group-hover:scale-110 transition duration-200"><img src="Github.jfif" class="w-full h-full object-contain rounded-xl" alt="GitHub"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Github</p>
+              <p class="mt-1 text-xs text-slate-400">Hosting & versi kode</p>
+            </a>
+          </div>
+        </div>
+
+        <!-- DESIGN SECTION -->
+        <div class="mt-12">
+          <div class="flex items-center gap-3 mb-4">
+            <h2 class="text-2xl font-bold text-pink-700 bg-pink-100 px-4 py-1 rounded-full">Design</h2>
+            <div class="flex-1 h-[2px] bg-pink-200"></div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5">
+            <a href="https://www.canva.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-50 via-blue-50 to-purple-50 shadow-lg group-hover:scale-110 transition duration-200"><img src="Canva.jfif" class="w-full h-full object-contain rounded-xl" alt="Canva"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Canva</p>
+              <p class="mt-1 text-xs text-slate-400">Desain</p>
+            </a>
+            <a href="https://www.figma.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-500/80 text-white group-hover:scale-110 transition duration-200"><img src="Figma.jfif" class="w-full h-full object-contain rounded-xl" alt="Figma"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Figma</p>
+              <p class="mt-1 text-xs text-slate-400">Desain UI/UX</p>
+            </a>
+            <a href="https://www.remove.bg" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-green-400/80 text-white group-hover:scale-110 transition duration-200"><img src="Remove.bg.jfif" class="w-full h-full object-contain rounded-xl" alt="Remove.bg"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Remove.bg</p>
+              <p class="mt-1 text-xs text-slate-400">Hapus Background</p>
+            </a>
+            <a href="https://www.pinterest.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-300 text-white group-hover:scale-110 transition duration-200"><img src="Pinterest.jfif" class="w-full h-full object-contain rounded-xl" alt="Pinterest"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Pinterest</p>
+              <p class="mt-1 text-xs text-slate-400">Inspirasi & gambar</p>
+            </a>
+            <a href="https://www.capcut.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-black/10 text-white group-hover:scale-110 transition duration-200"><img src="CapCut.jfif" class="w-full h-full object-contain rounded-xl" alt="CapCut"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Capcut</p>
+              <p class="mt-1 text-xs text-slate-400">edit video & gambar</p>
+            </a>
+          </div>
+        </div>
+
+        <!-- OTHER SECTION -->
+        <div class="mt-12">
+          <div class="flex items-center gap-3 mb-4">
+            <h2 class="text-2xl font-bold text-gray-700 bg-gray-100 border-gray-200 px-4 py-1 rounded-full">Other</h2>
+            <div class="flex-1 h-[2px] bg-purple-200"></div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5">
+            <a href="https://www.roblox.com" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-400/70 text-white group-hover:scale-110 transition duration-200"><img src="Roblox.jfif" class="w-full h-full object-contain rounded-xl" alt="Roblox"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Roblox</p>
+              <p class="mt-1 text-xs text-slate-400">Platform game & kreasi</p>
+            </a>
+            <a href="https://alternativeto.net" target="_blank" rel="noopener noreferrer" class="shortcut-card group rounded-3xl bg-white/82 p-5 shadow-[0_8px_24px_rgba(102,126,165,0.12)] ring-1 ring-white/80 focus:outline-none focus:ring-4 focus:ring-blue-200">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-orange-600 group-hover:scale-110 transition duration-200"><img src="Alternativeto.jfif" class="w-full h-full object-contain rounded-xl" alt="AlternativeTo"></div>
+              <p class="mt-4 text-sm font-semibold text-slate-700">Alternativeto</p>
+              <p class="mt-1 text-xs text-slate-400">Aplikasi pengganti</p>
+            </a>
+          </div>
+        </div>
+
+        <!-- Tentang Halaman Ini (Footer) -->
+        <div class="mt-16 fade-up">
+          <div class="mx-auto max-w-3xl flex flex-col sm:flex-row items-center gap-6 bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] ring-1 ring-white/60">
+            <img src="Futaru.png" alt="Logo" class="w-24 h-24 object-cover rounded-full border-4 border-white shadow-lg">
+            <div class="text-left">
+              <h3 class="text-lg font-semibold text-slate-800 mb-1">Tentang Halaman Ini</h3>
+              <p class="text-sm text-slate-500 leading-relaxed">Halaman ini dibuat untuk mempermudah akses ke berbagai website favorit seperti Google, AI tools, desain, dan media sosial dalam satu tempat yang rapi, cepat, dan nyaman digunakan setiap hari. Jika ingin Update maka bersabarlah!!!</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+</div>
+
+<script>
+  const defaultConfig = {
+    background_color: "#f6f8fc",
+    surface_color: "#ffffff",
+    text_color: "#1f1f1f",
+    primary_action_color: "#1a73e8",
+    secondary_action_color: "#5f6368",
+    font_family: "DM Sans",
+    font_size: 16,
+    page_title: "Selamat datang",
+    page_subtitle: "Buka website favoritmu lebih cepat dari satu halaman yang rapi dan ringan.",
+    search_placeholder: "Cari atau ketik URL"
+  };
+
+  const titleEl = document.getElementById("pageTitle");
+  const subtitleEl = document.getElementById("pageSubtitle");
+  const searchInputEl = document.getElementById("searchInput");
+  const searchButtonEl = document.getElementById("searchButton");
+  const bodyEl = document.body;
+  const shellEl = document.querySelector(".page-shell");
+  const badgeEl = document.querySelector("header .inline-flex");
+  const shortcutLabels = document.querySelectorAll(".shortcut-card p:first-of-type");
+  const shortcutSubLabels = document.querySelectorAll(".shortcut-card p:last-of-type");
+
+  function openTypedValue(value) {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+
+    const looksLikeUrl =
+        trimmed.includes(".") ||
+        trimmed.startsWith("http://") ||
+        trimmed.startsWith("https://") ||
+        trimmed.startsWith("www.");
+
+    const finalUrl = looksLikeUrl
+        ? (trimmed.startsWith("http://") || trimmed.startsWith("https://") ? trimmed : `https://${trimmed.replace(/^\/+/, "")}`)
+        : `https://www.google.com/search?q=${encodeURIComponent(trimmed)}`;
+
+    window.open(finalUrl, "_blank", "noopener,noreferrer");
+  }
+
+  document.getElementById("searchForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+    openTypedValue(searchInputEl.value);
+  });
+
+  function applyConfig(config) {
+    const merged = { ...defaultConfig, ...config };
+
+    if (bodyEl) {
+      bodyEl.style.background =
+          `radial-gradient(circle at top center, rgba(210,225,255,0.8) 0%, ${merged.background_color}F2 36%, ${merged.background_color} 68%), linear-gradient(180deg, #eef3fd 0%, ${merged.background_color} 100%)`;
+    }
+    if (shellEl) shellEl.style.color = merged.text_color;
+    if (titleEl) titleEl.textContent = merged.page_title;
+    if (subtitleEl) subtitleEl.textContent = merged.page_subtitle;
+    if (searchInputEl) searchInputEl.placeholder = merged.search_placeholder;
+    if (searchButtonEl) {
+      searchButtonEl.style.backgroundColor = merged.primary_action_color;
+      searchButtonEl.style.color = merged.surface_color;
+    }
+    if (badgeEl) {
+      badgeEl.style.backgroundColor = merged.surface_color + "B3";
+      badgeEl.style.color = merged.secondary_action_color;
+    }
+
+    const fontStack = `${merged.font_family}, "Segoe UI", sans-serif`;
+    if (titleEl) titleEl.style.fontFamily = fontStack;
+    if (subtitleEl) subtitleEl.style.fontFamily = fontStack;
+    if (searchInputEl) searchInputEl.style.fontFamily = fontStack;
+    if (searchButtonEl) searchButtonEl.style.fontFamily = fontStack;
+    if (badgeEl) badgeEl.style.fontFamily = fontStack;
+
+    const base = Number(merged.font_size) || 16;
+    if (titleEl) titleEl.style.fontSize = `${base * 2.6}px`;
+    if (subtitleEl) subtitleEl.style.fontSize = `${base * 1.05}px`;
+    if (searchInputEl) searchInputEl.style.fontSize = `${base}px`;
+    if (searchButtonEl) searchButtonEl.style.fontSize = `${base * 0.9}px`;
+
+    if (titleEl) titleEl.style.color = merged.text_color;
+    if (subtitleEl) subtitleEl.style.color = merged.secondary_action_color;
+
+    shortcutLabels.forEach((el) => {
+      el.style.color = merged.text_color;
+      el.style.fontFamily = fontStack;
+      el.style.fontSize = `${base * 0.9}px`;
+    });
+    shortcutSubLabels.forEach((el) => {
+      el.style.color = merged.secondary_action_color;
+      el.style.fontFamily = fontStack;
+      el.style.fontSize = `${base * 0.72}px`;
+    });
+  }
+
+  if (window.elementSdk) {
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange: async (config) => { applyConfig(config); },
+      mapToCapabilities: (config) => ({
+        recolorables: [
+          { get: () => config.background_color || defaultConfig.background_color, set: (value) => { config.background_color = value; window.elementSdk.setConfig({ background_color: value }); } },
+          { get: () => config.surface_color || defaultConfig.surface_color, set: (value) => { config.surface_color = value; window.elementSdk.setConfig({ surface_color: value }); } },
+          { get: () => config.text_color || defaultConfig.text_color, set: (value) => { config.text_color = value; window.elementSdk.setConfig({ text_color: value }); } },
+          { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: (value) => { config.primary_action_color = value; window.elementSdk.setConfig({ primary_action_color: value }); } },
+          { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: (value) => { config.secondary_action_color = value; window.elementSdk.setConfig({ secondary_action_color: value }); } }
+        ],
+        borderables: [],
+        fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: (value) => { config.font_family = value; window.elementSdk.setConfig({ font_family: value }); } },
+        fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (value) => { config.font_size = value; window.elementSdk.setConfig({ font_size: value }); } }
+      }),
+      mapToEditPanelValues: (config) => new Map([
+        ["page_title", config.page_title || defaultConfig.page_title],
+        ["page_subtitle", config.page_subtitle || defaultConfig.page_subtitle],
+        ["search_placeholder", config.search_placeholder || defaultConfig.search_placeholder]
+      ])
+    });
+    applyConfig(window.elementSdk.config || defaultConfig);
+  } else {
+    applyConfig(defaultConfig);
+  }
+
+  if (typeof lucide !== 'undefined' && lucide.createIcons) {
+    lucide.createIcons();
+  }
+</script>
+</body>
+</html>
